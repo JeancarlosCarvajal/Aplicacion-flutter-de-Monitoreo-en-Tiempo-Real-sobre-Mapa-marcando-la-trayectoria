@@ -14,6 +14,14 @@ class GpsState extends Equatable {
     required this.isGpsEnable, 
     required this.isGpsPermissionGranted
   });
+
+  GpsState copyWidth({
+    bool? isGpsEnable, 
+    bool? isGpsPermissionGranted
+  }) => GpsState (
+    isGpsEnable: isGpsEnable ?? this.isGpsEnable, 
+    isGpsPermissionGranted: isGpsPermissionGranted ?? this.isGpsPermissionGranted 
+  );
   
   // Equatable Agrega esta lista para verificar si algun estado se mantiene y no hacer retrabajos
   @override
