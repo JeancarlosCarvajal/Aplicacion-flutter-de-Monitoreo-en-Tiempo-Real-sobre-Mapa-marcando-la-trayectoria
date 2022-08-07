@@ -9,11 +9,11 @@ abstract class GpsEvent extends Equatable {
 
 
 class GpsAddPermissionEvent extends GpsEvent {
-  final bool isGpsEnable;
+  final bool isGpsEnabled;
   final bool isGpsPermissionGranted;
 
   const GpsAddPermissionEvent({
-    required this.isGpsEnable, 
+    required this.isGpsEnabled, 
     required this.isGpsPermissionGranted
   }); 
 }
