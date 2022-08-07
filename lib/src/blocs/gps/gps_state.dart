@@ -9,6 +9,10 @@ class GpsState extends Equatable {
 
   final bool isGpsPermissionGranted;
 
+  // indica si tengo todo lo necesario pa arrancar la aplicacion de gps
+  // el get va ser true ssi ambos permisos estan en true del resto sera false
+  bool get isAllGranted => isGpsEnabled && isGpsPermissionGranted;
+
 
   const GpsState({
     required this.isGpsEnabled, 

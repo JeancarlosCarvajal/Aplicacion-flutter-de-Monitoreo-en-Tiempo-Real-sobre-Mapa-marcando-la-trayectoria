@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 part 'gps_event.dart';
 part 'gps_state.dart';
@@ -27,15 +28,31 @@ class GpsBloc extends Bloc<GpsEvent, GpsState> {
 
   //
   Future<void> _init()async{
-    final isEnabled = await _checkGpsStatus();
-    print('isEnabled: $isEnabled');
+    // // verifica el status al inicial la app
+    // final isEnabled = await _checkGpsStatus();
+    // // verifica si tenemos permiso al iniciar la app
+    // final isGranted = await _isPermissionGranted();
+    // print('isEnabled: $isEnabled, isGranted: $isGranted');
+
+    // hacer los dos future de manera simultanea 
+    final List<bool> gpsInitStatus = await Future.wait([
+      _checkGpsStatus(), // el 0
+      _isPermissionGranted(), // el 1
+    ]);
     
     // agregar un evento
     add(GpsAddPermissionEvent(
-      isGpsEnabled: isEnabled, 
-      isGpsPermissionGranted: state.isGpsPermissionGranted // envia el estado donde se encuentre de momento
+      isGpsEnabled: gpsInitStatus[0], 
+      isGpsPermissionGranted: gpsInitStatus[1] // envia el estado donde se encuentre de momento
     ));
   }
+
+  // verifica si ya tuvimos el permiso con anterioridad
+  Future<bool> _isPermissionGranted() async {
+    final isGranted = await Permission.location.isGranted;
+    return isGranted;
+  }
+
 
   // verificamos que tenemos el acceso al GPS.... NOO estamos pidiendo permisos aqui
   Future<bool> _checkGpsStatus() async {
@@ -46,14 +63,38 @@ class GpsBloc extends Bloc<GpsEvent, GpsState> {
     gpsServiceSubscription = Geolocator.getServiceStatusStream().listen((event) {
       final isEnabled = ( event.index == 1 ) ? true : false;
       print('Service status $isEnabled');
+
       // agregar un evento en tiempo real y se modifique
-      add(GpsAddPermissionEvent(
-        isGpsEnabled: isEnabled, 
-        isGpsPermissionGranted: state.isGpsPermissionGranted // envia el estado donde se encuentre de momento
-      ));      
+      add( 
+        GpsAddPermissionEvent(
+          isGpsEnabled: isEnabled, 
+          isGpsPermissionGranted: state.isGpsPermissionGranted // envia el estado donde se encuentre de momento
+        ) 
+      );
+
     });
     return isEnable;
   }
+
+  // pregunta si quiere dar permisos de geolocalizacion
+  Future<void> askGpsAccess() async{
+    // ver el estatus del permiso
+    final status = await Permission.location.request();
+    
+    switch (status) { 
+      case PermissionStatus.granted:
+        add(GpsAddPermissionEvent(isGpsEnabled: state.isGpsEnabled, isGpsPermissionGranted: true));
+        break;
+      case PermissionStatus.denied: 
+      case PermissionStatus.restricted:
+      case PermissionStatus.limited:
+      case PermissionStatus.permanentlyDenied:
+        add(GpsAddPermissionEvent(isGpsEnabled: state.isGpsEnabled, isGpsPermissionGranted: false));
+        // me abre las setting para que el usuario pueda cambiar las opciones del gps
+        openAppSettings();
+    } 
+  }
+
 
   // limpiar el listener del geolocator evita fugas de memoria
   @override
