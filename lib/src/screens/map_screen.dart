@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; 
+
 import 'package:maps_app/src/blocs/blocs.dart';
+import 'package:maps_app/src/views/views.dart';
+import 'package:maps_app/src/widgets/widgets.dart';
 
 class MapScreen extends StatefulWidget { // lo converti a statufull para poder inicializar la ubicacion del usuario 
    
@@ -36,20 +38,33 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       body: BlocBuilder<LocationBloc, LocationState>(
         builder: (context, state) {
+
           if( state.lastKnowLocation == null ) return const Center(child: Text( 'Esepere por favor...' ));
 
-          final CameraPosition initialCameraPosition = CameraPosition( 
-            target: state.lastKnowLocation!, 
-            zoom: 15
+          return SingleChildScrollView( // hay que definir dimenciones de los hijos sino da error
+            child: Stack(
+              children: [
+                MapView(initialLocation: state.lastKnowLocation!),
+          
+                // TODO: Botones... 
+                
+              ],
+            ),
           );
 
-          return GoogleMap(initialCameraPosition: initialCameraPosition);
-          
+          // return GoogleMap(initialCameraPosition: initialCameraPosition); 
           // return Center(
           //   child: Text( 'Latitude: ${state.lastKnowLocation!.latitude}, Longitud: ${state.lastKnowLocation!.longitude}' ),
           // );
 
         },
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: const [
+          BtnCurrentLocation()
+        ],
       ),
     );
   }
