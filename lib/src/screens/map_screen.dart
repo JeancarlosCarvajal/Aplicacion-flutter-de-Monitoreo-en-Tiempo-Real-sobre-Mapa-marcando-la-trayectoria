@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_app/src/blocs/blocs.dart';
 
 class MapScreen extends StatefulWidget { // lo converti a statufull para poder inicializar la ubicacion del usuario 
@@ -36,9 +37,18 @@ class _MapScreenState extends State<MapScreen> {
       body: BlocBuilder<LocationBloc, LocationState>(
         builder: (context, state) {
           if( state.lastKnowLocation == null ) return const Center(child: Text( 'Esepere por favor...' ));
-          return Center(
-            child: Text( 'Latitude: ${state.lastKnowLocation!.latitude}, Longitud: ${state.lastKnowLocation!.longitude}' ),
+
+          final CameraPosition initialCameraPosition = CameraPosition( 
+            target: state.lastKnowLocation!, 
+            zoom: 15
           );
+
+          return GoogleMap(initialCameraPosition: initialCameraPosition);
+          
+          // return Center(
+          //   child: Text( 'Latitude: ${state.lastKnowLocation!.latitude}, Longitud: ${state.lastKnowLocation!.longitude}' ),
+          // );
+
         },
       ),
     );
