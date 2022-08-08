@@ -8,6 +8,7 @@ void main() {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => GpsBloc()),
+        BlocProvider(create: (_) => LocationBloc()),
       ], 
       child: const MapsApp()
     )
