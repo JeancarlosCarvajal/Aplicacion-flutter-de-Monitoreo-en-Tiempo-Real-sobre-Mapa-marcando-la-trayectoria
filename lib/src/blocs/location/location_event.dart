@@ -16,3 +16,4 @@ class OnNewUserLocationEvent extends LocationEvent {
 // indicar el inicio y fin del seguimiento del usuario
 class OnStartFollingUserEvent extends LocationEvent {}
 class OnStopFollingUserEvent extends LocationEvent {}
+

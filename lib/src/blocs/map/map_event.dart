@@ -12,9 +12,18 @@ class OnMapInitializedEvent extends MapEvent {
   // controller que me va suministrar Google Map en el mapa
   final GoogleMapController controller;
   // constructor
-  OnMapInitializedEvent(this.controller);
+  const OnMapInitializedEvent(this.controller);
 }
 
 
 class OnStopFollowingUserEvent extends MapEvent {}
 class OnStartFollowingUserEvent extends MapEvent {}
+
+
+// actualizar el Mapa de PolyLines que estan dentro del locationBloc en forma de arreglo
+class UpdateUserPolylinesEvent extends MapEvent {
+  final List<LatLng> userLocations;
+  const UpdateUserPolylinesEvent(this.userLocations);
+}
+
+class OnToggleUserRoute extends MapEvent {}

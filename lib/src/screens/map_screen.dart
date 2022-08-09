@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart'; 
 
 import 'package:maps_app/src/blocs/blocs.dart';
 import 'package:maps_app/src/views/views.dart';
@@ -42,12 +43,22 @@ class _MapScreenState extends State<MapScreen> {
           // JOJOJO se debria tener un mUltiBlocBuilder 
           return BlocBuilder<MapBloc, MapState>(
             builder: (context, mapState) {
+              // extraer el polyline de la ruta 
+              // crear una copia de las polylines para detener y crear una nueva polylines para la proxima que se active
+              Map<String, Polyline> polylines = Map.from(mapState.polylines);
+              // removerlo si y solo sii.. OJOJO analizar mejor
+              if(!mapState.showMyRoute){ // remueve la ruta del Mapa de polylines
+              // remuevo las polylines del Map nuevo que cree peeero el original queda intacto
+              // esto se hace para no eliminar el original que lo podemos usar nuevamente para activar la vista de la ruta
+                polylines.removeWhere((key, value) => key == 'MyRoute');
+              }
               return SingleChildScrollView( // hay que definir dimenciones de los hijos sino da error
                 child: Stack(
                   children: [
                     MapView(
                       initialLocation: locationState.lastKnowLocation!, 
-                      polylines: mapState.polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
+                      // polylines: mapState.polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
+                      polylines: polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
                     ),
               
                     // TODO: Botones... 
@@ -69,6 +80,7 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: const [
+          BtnToggleUserRoute(),
           BtnFollowUser(),
           BtnCurrentLocation(),
         ],
