@@ -7,10 +7,13 @@ import 'package:maps_app/src/blocs/blocs.dart';
 class MapView extends StatelessWidget {
 
   final LatLng initialLocation;
+
+  final Set<Polyline> polylines;
    
   const MapView({
     Key? key, 
-    required this.initialLocation
+    required this.initialLocation, 
+    required this.polylines
   }) : super(key: key);
   
   @override
@@ -26,22 +29,26 @@ class MapView extends StatelessWidget {
     return SizedBox(
       height: size.height,
       width: size.width,
-      child: GoogleMap(
-        initialCameraPosition: initialCameraPosition,
-        compassEnabled: false,
-        myLocationEnabled: true,
-        zoomControlsEnabled: false,
-        myLocationButtonEnabled: false,
-        
-        // es una manera de capturar el controlador y tenerlo disponible en otro lado de la aplicacion 
-        onMapCreated: (controller) => mapBloc.add(OnMapInitializedEvent(controller)), 
-
-        // TODO: Markers
-
-        // TODO: polylines
-
-        // TODO: cuando se mueva el mapa
-
+      child: Listener( // escucha eventos del usuario par ver si movio la pantalla y dejar de seguir al objetivo del GPS
+        onPointerMove: (pointerMoveEvent) => mapBloc.add(OnStopFollowingUserEvent()),
+        child: GoogleMap(
+          initialCameraPosition: initialCameraPosition,
+          compassEnabled: false,
+          myLocationEnabled: true,
+          zoomControlsEnabled: false,
+          myLocationButtonEnabled: false,
+          polylines: polylines,
+          
+          // es una manera de capturar el controlador y tenerlo disponible en otro lado de la aplicacion 
+          onMapCreated: (controller) => mapBloc.add(OnMapInitializedEvent(controller)), 
+      
+          // TODO: Markers
+      
+          // TODO: polylines
+      
+          // TODO: cuando se mueva el mapa 
+      
+        ),
       ),
     ); 
   }

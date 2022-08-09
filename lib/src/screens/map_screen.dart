@@ -36,20 +36,26 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<LocationBloc, LocationState>(
-        builder: (context, state) {
-
-          if( state.lastKnowLocation == null ) return const Center(child: Text( 'Esepere por favor...' ));
-
-          return SingleChildScrollView( // hay que definir dimenciones de los hijos sino da error
-            child: Stack(
-              children: [
-                MapView(initialLocation: state.lastKnowLocation!),
-          
-                // TODO: Botones... 
-                
-              ],
-            ),
+      body: BlocBuilder<LocationBloc, LocationState>(  // JOJOJO se debria tener un mUltiBlocBuilder
+        builder: (context, locationState) {
+          if( locationState.lastKnowLocation == null ) return const Center(child: Text( 'Esepere por favor...' ));
+          // JOJOJO se debria tener un mUltiBlocBuilder 
+          return BlocBuilder<MapBloc, MapState>(
+            builder: (context, mapState) {
+              return SingleChildScrollView( // hay que definir dimenciones de los hijos sino da error
+                child: Stack(
+                  children: [
+                    MapView(
+                      initialLocation: locationState.lastKnowLocation!, 
+                      polylines: mapState.polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
+                    ),
+              
+                    // TODO: Botones... 
+                    
+                  ],
+                ),
+              );
+            },
           );
 
           // return GoogleMap(initialCameraPosition: initialCameraPosition); 
@@ -63,7 +69,8 @@ class _MapScreenState extends State<MapScreen> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: const [
-          BtnCurrentLocation()
+          BtnFollowUser(),
+          BtnCurrentLocation(),
         ],
       ),
     );

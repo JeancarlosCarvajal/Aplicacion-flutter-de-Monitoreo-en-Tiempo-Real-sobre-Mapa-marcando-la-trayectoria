@@ -16,8 +16,8 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   LocationBloc() : super(const LocationState()) { // tenia LocationInitial y lo cambie por LocationState()
 
     // indicar el inicio y fin del seguimiento del usuario
-    on<OnStartFollingUser>((event, emit) => emit(state.copyWith(followingUser: true)));
-    on<OnStopFollingUser>((event, emit) => emit(state.copyWith(followingUser: false)));
+    on<OnStartFollingUserEvent>((event, emit) => emit(state.copyWith(isFollowingUser: true)));
+    on<OnStopFollingUserEvent>((event, emit) => emit(state.copyWith(isFollowingUser: false)));
 
     on<OnNewUserLocationEvent>((event, emit) {
       emit(
@@ -42,7 +42,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
   // darle seguimiento al usuario del gps
   void startFollowingUser(){ 
     // accionamos el evento OnStartFollingUser
-    add(OnStartFollingUser());
+    add(OnStartFollingUserEvent());
     print('startFollowingUser'); 
     // es para escuchar cualquier cambio en la ubicacion
     // simpre hay que limpiar los listen
@@ -61,7 +61,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     // OJO si le colocas ! estas diciebdo que este valor siempre va tener algo que NO va ser null entonces NO aplica en este caso
     positionStream?.cancel(); 
     // accionamos el evento de OnStopFollingUser
-    add(OnStopFollingUser());
+    add(OnStopFollingUserEvent());
     print('stopFolloingUser'); 
   }
   

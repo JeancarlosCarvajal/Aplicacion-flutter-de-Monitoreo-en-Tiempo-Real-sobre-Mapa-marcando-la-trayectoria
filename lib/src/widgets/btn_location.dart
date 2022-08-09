@@ -32,8 +32,10 @@ class BtnCurrentLocation extends StatelessWidget {
               final snack = CustomSnackBar(message: 'No hay Ubicacion');
               ScaffoldMessenger.of(context).showSnackBar(snack);
               return;              
-            } 
-            // si todo bien en caso si hay userLocation
+            }
+            // si todo bien en caso si hay userLocation, seguimos con el codigo debajo
+            // setear el seguimiento del usuario en true
+            mapBloc.add(OnStartFollowingUserEvent());            
             // acceder al MapBloc para mover la camara a la ultima posicion conocida en el locationBloc
             mapBloc.moveCamera(userLocation);
 
