@@ -1,11 +1,10 @@
-
-
-
 import 'package:flutter/material.dart';
+import 'package:maps_app/src/models/models.dart';
 
 
 
-class SearchDestinationDelegate extends SearchDelegate {
+// esta clase me va retornar un SearchResult siempre porque asi me lo va entregar el modelo junto con el resultadode la API
+class SearchDestinationDelegate extends SearchDelegate<SearchResult> {
 
   // esto es propio del searchdelegate
   SearchDestinationDelegate():super(
@@ -20,7 +19,7 @@ class SearchDestinationDelegate extends SearchDelegate {
       IconButton(
         icon: const Icon(Icons.clear),
         onPressed: (){
-          // el query es algo propio de SearchDelegate
+          // el query es algo propio de SearchDelegate, limpia el buscador
           query = ''; 
         }, 
       )
@@ -34,8 +33,9 @@ class SearchDestinationDelegate extends SearchDelegate {
     return IconButton(
       icon: const Icon(Icons.arrow_back_ios),
       onPressed: (){
+        final SearchResult result = SearchResult(cancel: true)  ;
         // es propio del SearchDelegate para deviolverte y salir de alli
-        close(context, null);
+        close(context, result);
       },
     );
   }
@@ -55,9 +55,10 @@ class SearchDestinationDelegate extends SearchDelegate {
         ListTile(
           leading: const Icon(Icons.location_on_outlined, color: Colors.black),
           title: const Text( 'Colocar la ubicacion manualmente', style: TextStyle(color: Colors.black) ),
-          onTap: (){
-            // TODO: regresar algo
-            close(context, null);
+          onTap: (){ 
+            final SearchResult result = SearchResult(cancel: false, manual: true)  ;
+            // es propio del SearchDelegate para deviolverte y salir de alli
+            close(context, result);
           },
         )
       ],
