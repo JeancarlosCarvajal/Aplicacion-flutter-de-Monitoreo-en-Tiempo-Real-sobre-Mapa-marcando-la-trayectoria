@@ -60,8 +60,9 @@ class _MapScreenState extends State<MapScreen> {
                       // polylines: mapState.polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
                       polylines: polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
                     ),
-              
-                    // TODO: Botones... 
+
+                    // TODO: Botones
+                    SearchBar()
                     
                   ],
                 ),
