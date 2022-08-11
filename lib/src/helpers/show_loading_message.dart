@@ -1,17 +1,42 @@
 
 
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 
-void ShowLoadingMessage(BuildContext context) {
+void showLoadingMessage(BuildContext context) {
+
+  if(Platform.isIOS){
+    showCupertinoDialog(
+      context: context, 
+      builder: (context) => const CupertinoAlertDialog(
+        title: Text( 'Espere por favor...' ),
+        content: CupertinoActivityIndicator(),
+      )
+    );
+    return;
+  }
 
   showDialog(
     context: context, 
     barrierDismissible: false, // para que la persona no lo cierre al darle click afuera
-    builder: (context) => const AlertDialog(
-      title: Text( 'Espere por favor...' ),
-      content: Text( 'Calculando ruta...' ),
+    builder: (context) => AlertDialog(
+      title: const Text( 'Espere por favor...' ),
+      content: Container(
+        width: 100,
+        height: 100,
+        margin: const EdgeInsets.only(top: 10),
+        child: Column(
+          children: const [
+            Text( 'Calculando ruta...' ),
+            SizedBox(height: 5),
+            CircularProgressIndicator(strokeWidth: 3, color: Colors.black,)
+          ],
+        ),
+      ),
     )
   );
-  return;
+
 }

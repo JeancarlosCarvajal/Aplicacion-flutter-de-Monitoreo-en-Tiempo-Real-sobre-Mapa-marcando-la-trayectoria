@@ -80,13 +80,16 @@ class _ManualMarkerBody extends StatelessWidget {
                   if(end == null) return;
 
                   // mostrar mensaje de cargando
-                  ShowLoadingMessage(context);
-
-                  searchBloc.add(OnDeactivateManualMarkerEvent());
-
+                  showLoadingMessage(context);
+ 
                   final destination = await searchBloc.getCoorsStartToEndBloc(start, end);
                   await mapBloc.drawRoutesPolylines(destination);
                 
+                  searchBloc.add(OnDeactivateManualMarkerEvent());
+
+                  // cierra la ventana de cargando mapa
+                  Navigator.pop(context);
+
                 },
                 child: const Text( 'Confirmar destino', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w300) ),
               ),
