@@ -15,14 +15,23 @@ class TrafficService {
 
   // el dio sirve para dar formato a las respuestas http que tienen formato JSON y otras cosas mas
   final Dio _dioTraffic;
+  final Dio _dioPlaces;
 
-  final String _baseUrl = 'api.mapbox.com'; // para usar HTTP paquete
-
+  final String _baseUrl = 'api.mapbox.com'; // para usar HTTP paquete 
   final String _baseHTTPS = 'https://api.mapbox.com'; // para usar Dio paquete
+
+  // para encontrar ubicaciones manualmente
+  final _endpoint = '/directions/v5/mapbox';
+
+  // para el buscador
+  final _endpointSearcher = '/geocoding/v5/mapbox.places';
+
+
 
   TrafficService()
     // : this._dioTraffic = Dio()..interceptors.add(TrafficInterseptor()); // configurar interseptores desde la clase nueva mas complejo pero otra forma de hacerlo, NO recomendada es mas trabajo
-    : this._dioTraffic = Dio(); // Sin configurar interseptores, se configura mas abajo mas sesillooo OJOJOJOJO
+    : this._dioTraffic = Dio(), // Sin configurar interseptores, se configura mas abajo mas sesillooo OJOJOJOJO
+      this._dioPlaces = Dio()..interceptors.add(PlacesInterceptor()); // Sin configurar interseptores, se configura mas abajo mas sesillooo OJOJOJOJO
  
   Future<TrafficResponse> getCoorsStartToEnd(LatLng start, LatLng end) async {
     // coordenada original
@@ -32,7 +41,7 @@ class TrafficService {
     final apiMapBox = dotenv.env['MAPBOX_TOKEN']; // MAPBOX_TOKEN_STYLES   MAPBOX_TOKEN
 
     // tomamos los datos de la latitud y longitud de los parametros obtenidos de la funcion
-    final endpoint = '/directions/v5/mapbox/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}';
+    final endpoint = '$_endpoint/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}';
 
     // Usando HTTP con un modelo
     // var url =  Uri.https(_baseUrl, endpoint, {
@@ -65,7 +74,27 @@ class TrafficService {
 
     final data = TrafficResponse.fromMap(responce.data); 
 
-    return data; 
-
+    return data;  
   } 
+
+  // obtener los resultados de una busqueda
+  Future<List<Feature>> getResultByQuery(LatLng proximity, String query) async{
+    // request original
+    // https://api.mapbox.com/geocoding/v5/mapbox.places/playa.json?limit=7&proximity=-64.68157761816461,10.197284833183048&language=es&access_token=pk.eyJ1IjoiamNjOTYzOCIsImEiOiJja2IzM2szeGcwaGMxMnJsbXFpZHBrZzQ4In0.TzhtX58jizz1eHxlts1KYQ
+    if(query.isEmpty) return [];
+    final url = '$_baseHTTPS$_endpointSearcher/$query.json';
+
+    final resp = await _dioPlaces.get(url, 
+      queryParameters: {
+        'proximity': '${proximity.longitude},${proximity.latitude}'
+      }
+    );
+
+    // damos formato a la respuesta
+    final placesFeature = PlacesResponse.fromMap(resp.data);
+     
+    // retorno lo lugares
+    return placesFeature.features;
+  }
+
 }

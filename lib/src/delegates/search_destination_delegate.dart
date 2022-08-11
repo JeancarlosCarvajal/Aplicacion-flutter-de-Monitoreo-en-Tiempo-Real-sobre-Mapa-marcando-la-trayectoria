@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:maps_app/src/blocs/blocs.dart';
 import 'package:maps_app/src/models/models.dart';
+import 'package:maps_app/src/services/services.dart';
 
 
 
@@ -41,9 +44,22 @@ class SearchDestinationDelegate extends SearchDelegate<SearchResult> {
   }
 
   @override
-  Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    return Text( 'BuildResults' );
+  Widget buildResults(BuildContext context) { 
+    //accedemos al search bloc para buscar el metodo que nos lleva  a la API
+    final searchBloc = BlocProvider.of<SearchBloc>(context);
+    // obtnenemos la ultima ubicacion del ususario
+    final proximity = BlocProvider.of<LocationBloc>(context).state.lastKnowLocation;
+    // si la ultima localizacion no es null prosigue sino dame mensaje de no hay ubicacion inicial
+    if(proximity == null) return const Text( 'No hay Ubicacion Inicial' );
+    // llamando a la API pa que tenga la lista de lugares cercanos al proximity
+    searchBloc.getPlacesByQueryBloc(proximity, query);
+    // aqui va ir la respuesta de la api
+    return BlocBuilder<SearchBloc, SearchState>(
+      builder: (context, state) {
+        return const Text( 'Aqui van los resultados' );
+      },
+    );
+    // return Text( 'BuildResults' );
   }
 
   @override

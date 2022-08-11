@@ -51,5 +51,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
 
+  // devolver la respuesta 
+  Future getPlacesByQueryBloc(LatLng proximity, String query) async{
+    final resp = trafficService.getResultByQuery(proximity, query);
+
+    // TODO:  alamcenar en el state
+
+  }
+
 
 }
