@@ -27,3 +27,9 @@ class UpdateUserPolylinesEvent extends MapEvent {
 }
 
 class OnToggleUserRoute extends MapEvent {}
+
+//evento para mostrar las direcciones creadas manualmente
+class DisplayPolylinesEvent extends MapEvent {
+  final Map<String, Polyline> polylines;
+  const DisplayPolylinesEvent(this.polylines);
+}

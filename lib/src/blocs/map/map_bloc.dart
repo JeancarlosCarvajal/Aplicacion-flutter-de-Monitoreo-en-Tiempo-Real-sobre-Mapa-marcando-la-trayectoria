@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_app/src/blocs/blocs.dart';
+import 'package:maps_app/src/models/models.dart';
 
 part 'map_event.dart';
 part 'map_state.dart';
@@ -15,6 +16,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   final LocationBloc locationBloc;
 
   GoogleMapController? _mapController;
+
+  // para obtener la ubicacion seleccionada
+  LatLng? mapCenter;
 
   // cerrar el listener StreamSubscription<LocationState>
   StreamSubscription<LocationState>? locationStateSubscription;
@@ -36,6 +40,9 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // activar el evento para quitar la linea de seguimiento del usuario
     // OJOJOJ el uso del ! indica que va coloar el mismo valor pero en sentido contrario es decir si esta en true coloca false
     on<OnToggleUserRoute>((event, emit) => emit(state.copyWith(showMyRoute: !state.showMyRoute)));
+
+    // creamos el evento de cuando se tenga direcciones seleccionadas manualmente
+    on<DisplayPolylinesEvent>((event, emit) => emit(state.copyWith(polylines: event.polylines)));
 
     //escuchar los cambios en el LocationBloc, para mover la camara en cada cambio de ubicacion del usuario
     locationStateSubscription = locationBloc.stream.listen(( locationState ) {
@@ -81,7 +88,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   void _updatePolylineNewPoint( UpdateUserPolylinesEvent event, Emitter<MapState> emit ) {
 
     final myRoute = Polyline( // Polyline() es un Objeto que viene de GoogleMaps de Flutter   
-      polylineId: PolylineId('MyRoute'),
+      polylineId: const PolylineId('MyRoute'),
       color: Colors.black,
       width: 5,
       startCap: Cap.roundCap,
@@ -94,6 +101,25 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // Sobreescribimos la polyline al mapa de polylines creados
     currentPolylines['MyRoute'] = myRoute;
     emit( state.copyWith(polylines: currentPolylines));
+  }
+
+  // marca la ruta de las direcciones seleccionadas manualmente\
+  Future drawRoutesPolylines( RouteDestination destination ) async {
+    final myRoute = Polyline(
+      polylineId: const PolylineId('route'),
+      color: Colors.black,
+      points: destination.points,
+      width: 5,
+      startCap: Cap.roundCap,
+      endCap: Cap.roundCap, 
+    );
+
+    // creamos una copia de las polylines actuales, se hace esto porque no podemos modificar un  Mapa que sea constante
+    final currentPolylines = Map<String, Polyline>.from(state.polylines);
+    currentPolylines['route'] = myRoute;
+
+    // agregamos el evento de la ruta polylines de la busqueda manual DisplayPolylinesEvent
+    add(DisplayPolylinesEvent(currentPolylines));
   }
 
   // mover la camara donde quiera

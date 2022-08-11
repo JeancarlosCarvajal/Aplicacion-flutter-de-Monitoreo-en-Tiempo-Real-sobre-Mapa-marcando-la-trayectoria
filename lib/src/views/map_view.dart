@@ -41,6 +41,12 @@ class MapView extends StatelessWidget {
           
           // es una manera de capturar el controlador y tenerlo disponible en otro lado de la aplicacion 
           onMapCreated: (controller) => mapBloc.add(OnMapInitializedEvent(controller)), 
+
+          // ver las coordenadas que estoy seleccionando
+          // aqui estamos pasando la ubicacion seleccionada al objeto de la clase del bloc llamada mapCenter
+          //ojo este procedimiento no redibuja el widget es solo para mantener la referencia de la ubicaicon
+          // redibujar el widget en oncameramove consume demasiados recursos del dispositivo
+          onCameraMove: (position) => mapBloc.mapCenter = position.target,
       
           // TODO: Markers
       
