@@ -50,4 +50,3 @@ app.*.map.json
 # Aqui esta el APiKey
 /android/app/src/main/AndroidManifest.xml
 ios/Runner/AppDelegate.swift
-lib/src/services/traffic_service.dart
