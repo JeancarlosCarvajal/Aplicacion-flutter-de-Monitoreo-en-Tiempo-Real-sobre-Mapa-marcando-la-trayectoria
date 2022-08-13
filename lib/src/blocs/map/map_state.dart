@@ -20,31 +20,38 @@ class MapState extends Equatable {
   */
   
   // captura la ubicacion final del usuario para crear una marca en la ruta
-  final LatLng? endPontSearch;
+  final LatLng? endPontSearch; // OJO debi de haberlo metido en el equitable OJOJO
+  // Marcadores
+  final Map<String, Marker> markers;
+
 
   const MapState({
     this.isMapInitialized = false, 
     this.isFollowingUser = false,
     this.showMyRoute = true,
     this.endPontSearch,
-    Map<String, Polyline>? polylines
-  }): polylines = polylines ?? const {};
+    Map<String, Polyline>? polylines,
+    Map<String, Marker>? markers,
+  }): polylines = polylines ?? const {},
+      markers = markers ?? const {};
 
   MapState copyWith({
     bool? isMapInitialized, 
     bool? isFollowingUser,
     bool? showMyRoute,
     LatLng? endPontSearch,
-    Map<String, Polyline>? polylines
+    Map<String, Polyline>? polylines,
+    Map<String, Marker>? markers
   }) => MapState(
       isMapInitialized: isMapInitialized ?? this.isMapInitialized,
       isFollowingUser: isFollowingUser ?? this.isFollowingUser,    
       showMyRoute: showMyRoute ?? this.showMyRoute,
       endPontSearch: endPontSearch ?? this.endPontSearch,
-      polylines: polylines ?? this.polylines
+      polylines: polylines ?? this.polylines,
+      markers: markers ?? this.markers
   );
   
   @override
-  List<Object> get props => [isMapInitialized, isFollowingUser, polylines, showMyRoute];
+  List<Object> get props => [ isMapInitialized, isFollowingUser, polylines, showMyRoute, markers ];
 }
  

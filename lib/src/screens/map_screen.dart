@@ -59,6 +59,7 @@ class _MapScreenState extends State<MapScreen> {
                       initialLocation: locationState.lastKnowLocation!, 
                       // polylines: mapState.polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
                       polylines: polylines.values.toSet(), // OJOJOJ el toSet() sirvio para convertir el Map de las polylines en un Set
+                      markers: mapState.markers.values.toSet(), // .values.toSet() se agrego eso al mapa para poder enviarlo es un set de mapas Set<Marker>
                     ),
  
                     SearchBar(),

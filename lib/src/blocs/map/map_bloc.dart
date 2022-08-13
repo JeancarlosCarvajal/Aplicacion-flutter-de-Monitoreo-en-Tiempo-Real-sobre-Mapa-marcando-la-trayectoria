@@ -45,7 +45,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<DisplayPolylinesEvent>((event, emit) { 
         // mueve la camara a la posicion donde quiero ir
         moveCamera(event.endPointSearch!);
-        emit(state.copyWith(polylines: event.polylines, endPontSearch: event.endPointSearch));
+        emit(state.copyWith( polylines: event.polylines, endPontSearch: event.endPointSearch, markers: event.markers ));
       }    
     );
 
@@ -121,12 +121,48 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       endCap: Cap.roundCap, 
     );
 
+    // convertir metro y minutos a km y horas
+    double kms = (destination.distance / 1000).floorToDouble();
+
+    double tripDuration = ((destination.duration / 60).floorToDouble());
+
+    final startMarkers = Marker(
+      markerId: const MarkerId('start'),
+      position: destination.points.first, // agrega al first al final del objeto array me devuelve el primer valor
+      icon: BitmapDescriptor.defaultMarkerWithHue(250),
+      infoWindow: const InfoWindow(
+        title: 'Inicio',
+        snippet: 'Este es el Punto de Inicio de mi Ruta'
+      )
+    );
+
+    final endMarkers = Marker(
+      markerId: const MarkerId('end'),
+      position: destination.points.last, // agrega al first al final del objeto array me devuelve el primer valor
+      icon: BitmapDescriptor.defaultMarkerWithHue(000),
+      infoWindow: InfoWindow(
+        title: 'End',
+        snippet: 'Distance: $kms kms, Duration: $tripDuration minutes'
+      )
+    );
+
     // creamos una copia de las polylines actuales, se hace esto porque no podemos modificar un  Mapa que sea constante
     final currentPolylines = Map<String, Polyline>.from(state.polylines);
     currentPolylines['route'] = myRoute;
 
+    // enviar los marcadores agarrando los axistentes y creando uno nuevo
+    final currentMarkers = Map<String, Marker>.from(state.markers);
+    currentMarkers['start'] = startMarkers;
+    currentMarkers['end'] = endMarkers; 
+
     // agregamos el evento de la ruta polylines de la busqueda manual DisplayPolylinesEvent
-    add(DisplayPolylinesEvent( polylines: currentPolylines, endPointSearch: endPointSearch));
+    add(DisplayPolylinesEvent( polylines: currentPolylines, endPointSearch: endPointSearch, markers: currentMarkers ));
+    
+    // acceder al mapCOntroller para dejar activo un marcador inicial por defecto
+    // esperar un segundo pa que muestre
+    await Future.delayed(const Duration(milliseconds: 300));
+    // busca el marcador final
+    _mapController?.showMarkerInfoWindow(const MarkerId('end'));
   }
 
   // mover la camara donde quiera

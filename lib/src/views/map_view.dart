@@ -9,11 +9,14 @@ class MapView extends StatelessWidget {
   final LatLng initialLocation;
 
   final Set<Polyline> polylines;
+  // para los markers
+  final Set<Marker> markers;
    
   const MapView({
     Key? key, 
     required this.initialLocation, 
-    required this.polylines
+    required this.polylines, 
+    required this.markers
   }) : super(key: key);
   
   @override
@@ -39,14 +42,15 @@ class MapView extends StatelessWidget {
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
           polylines: polylines,
-          markers:  <Marker>{
-            Marker(
-              draggable: true,
-              markerId: const MarkerId('marker_1'),
-              position: mapBloc.state.endPontSearch ?? locationBloc.state.lastKnowLocation!,
-              icon: BitmapDescriptor.defaultMarkerWithHue(310),
-            )
-          },
+          // markers:  <Marker>{ // creado por mi Jeancarlos
+          //   Marker(
+          //     draggable: true,
+          //     markerId: const MarkerId('marker_1'),
+          //     position: mapBloc.state.endPontSearch ?? locationBloc.state.lastKnowLocation!,
+          //     icon: BitmapDescriptor.defaultMarkerWithHue(310),
+          //   )
+          // },
+          markers: markers, // es un mapa de marcadores puedes colocar varios
           // es una manera de capturar el controlador y tenerlo disponible en otro lado de la aplicacion 
           onMapCreated: (controller) => mapBloc.add(OnMapInitializedEvent(controller)), 
 

@@ -32,5 +32,7 @@ class OnToggleUserRoute extends MapEvent {}
 class DisplayPolylinesEvent extends MapEvent {
   final Map<String, Polyline> polylines;
   final LatLng? endPointSearch;
-  const DisplayPolylinesEvent({ required this.polylines, this.endPointSearch});
+  // agrega mapa de markadores
+  final Map<String, Marker> markers;
+  const DisplayPolylinesEvent({ required this.polylines, this.endPointSearch, required this.markers });
 }
