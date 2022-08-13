@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:maps_app/src/blocs/blocs.dart';
+import 'package:maps_app/src/helpers/helpers.dart';
 import 'package:maps_app/src/models/models.dart';
 
 part 'map_event.dart';
@@ -126,10 +127,16 @@ class MapBloc extends Bloc<MapEvent, MapState> {
 
     double tripDuration = ((destination.duration / 60).floorToDouble());
 
+    // marcador personalizado
+    final startMarket = await getAssetImageMarker();
+    // marcador desde url personalizado
+    final endMarker = await getNetworkImageMarker();
+
     final startMarkers = Marker(
       markerId: const MarkerId('start'),
       position: destination.points.first, // agrega al first al final del objeto array me devuelve el primer valor
-      icon: BitmapDescriptor.defaultMarkerWithHue(250),
+      // icon: BitmapDescriptor.defaultMarkerWithHue(250),  // hecho por jean
+      icon: startMarket,
       infoWindow: const InfoWindow(
         title: 'Inicio',
         snippet: 'Este es el Punto de Inicio de mi Ruta'
@@ -139,10 +146,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final endMarkers = Marker(
       markerId: const MarkerId('end'),
       position: destination.points.last, // agrega al first al final del objeto array me devuelve el primer valor
-      icon: BitmapDescriptor.defaultMarkerWithHue(000),
+      // icon: BitmapDescriptor.defaultMarkerWithHue(000), // lo tenia Jean
+      icon: endMarker,
       infoWindow: InfoWindow(
-        title: 'End',
-        snippet: 'Distance: $kms kms, Duration: $tripDuration minutes'
+        title: destination.endPlace?.text != null ? destination.endPlace!.text : 'End',
+        // snippet: 'Distance: $kms kms, Duration: $tripDuration minutes' // tenia esto para pruebas
+        snippet: destination.endPlace?.placeName != null ? destination.endPlace!.placeName : 'Distance: $kms kms, Duration: $tripDuration minutes'
       )
     );
 
@@ -162,7 +171,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // esperar un segundo pa que muestre
     await Future.delayed(const Duration(milliseconds: 300));
     // busca el marcador final
-    _mapController?.showMarkerInfoWindow(const MarkerId('end'));
+    _mapController?.showMarkerInfoWindow(const MarkerId('end')); 
   }
 
   // mover la camara donde quiera

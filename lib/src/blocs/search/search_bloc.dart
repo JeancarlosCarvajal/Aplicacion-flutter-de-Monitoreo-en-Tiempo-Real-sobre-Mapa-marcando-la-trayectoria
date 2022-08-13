@@ -38,6 +38,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   Future<RouteDestination> getCoorsStartToEndBloc(LatLng start, LatLng end) async{  
     final trafficResponse = await trafficService.getCoorsStartToEnd(start, end);
+
+    // informacion del destino en funcion de las coordenadas
+    final endPlace = await trafficService.getInformationByCoors(end);
+
     if(trafficResponse.code == 'NoRoute') {
       return RouteDestination(
         points: [const LatLng(0, 0)], 
@@ -55,13 +59,14 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     // decodifica la geometria en formato polyline6 con 6 nuemros accuracyExponent 6
     final points = decodePolyline(geometry, accuracyExponent: 6); 
-    print(points);
+    // print(points);
     // .toList() para convertirlo en una lista
     final polyLines = points.map(( coors ) => LatLng(coors[0].toDouble(), coors[1].toDouble()) ).toList();
     return RouteDestination(
       points: polyLines, 
       duration: duration, 
-      distance: distance
+      distance: distance,
+      endPlace: endPlace
     );
   }
 

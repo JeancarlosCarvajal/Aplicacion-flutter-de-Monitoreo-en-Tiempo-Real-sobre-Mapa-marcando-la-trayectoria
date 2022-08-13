@@ -26,6 +26,8 @@ class TrafficService {
   // para el buscador
   final _endpointSearcher = '/geocoding/v5/mapbox.places';
 
+  // aqui accedemos al token de acceso de MapBox
+  final apiMapBox = dotenv.env['MAPBOX_TOKEN']; // MAPBOX_TOKEN_STYLES   MAPBOX_TOKEN
 
 
   TrafficService()
@@ -37,8 +39,6 @@ class TrafficService {
     // coordenada original
     // https://api.mapbox.com/directions/v5/mapbox/driving/-64.6704470511136,10.197819480066102;-64.68369719231988,10.181118808609341?alternatives=true&geometries=polyline6&overview=simplified&steps=false&access_token=API_KEY_MAPBOX
     
-    // aqui accedemos al token de acceso de MapBox
-    final apiMapBox = dotenv.env['MAPBOX_TOKEN']; // MAPBOX_TOKEN_STYLES   MAPBOX_TOKEN
 
     // tomamos los datos de la latitud y longitud de los parametros obtenidos de la funcion
     final endpoint = '$_endpoint/driving/${start.longitude},${start.latitude};${end.longitude},${end.latitude}';
@@ -80,6 +80,7 @@ class TrafficService {
 
   // obtener los resultados de una busqueda
   Future<List<Feature>> getResultByQuery(LatLng proximity, String query) async{
+    
     // request original
     // https://api.mapbox.com/geocoding/v5/mapbox.places/playa.json?limit=7&proximity=-64.68157761816461,10.197284833183048&language=es&access_token=TOKEN_MAPBOX
     if(query.isEmpty) return [];
@@ -96,6 +97,28 @@ class TrafficService {
      
     // retorno lo lugares
     return placesFeature.features;
+  }
+
+  // obtener la GeoLocalizacion inversa, es decir al enviar las coordenadas nos diga donde es eso nos de una referencia escrita
+  Future<Feature> getInformationByCoors(LatLng coors) async{
+    // request original
+    // https://api.mapbox.com/geocoding/v5/mapbox.places/playa.json?limit=7&language=es&access_token=TOKEN_MAPBOX 
+    final url = '$_baseHTTPS$_endpointSearcher/${coors.longitude},${coors.latitude}.json';
+     // aqui seteamos la base del url en HTTPS
+     _dioTraffic.options.baseUrl = _baseHTTPS;
+    final resp = await _dioTraffic.get(url, 
+      queryParameters: {
+        'limit': '1',
+        'language': 'es',
+        'access_token': apiMapBox,
+      }
+    );
+
+    // damos formato a la respuesta
+    final placesResponse = PlacesResponse.fromMap(resp.data);
+     
+    // retorno lo lugares
+    return placesResponse.features[0] ;
   }
 
 }
