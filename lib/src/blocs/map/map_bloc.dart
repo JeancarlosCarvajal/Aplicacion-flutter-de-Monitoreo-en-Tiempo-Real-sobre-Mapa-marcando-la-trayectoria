@@ -42,7 +42,12 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     on<OnToggleUserRoute>((event, emit) => emit(state.copyWith(showMyRoute: !state.showMyRoute)));
 
     // creamos el evento de cuando se tenga direcciones seleccionadas manualmente
-    on<DisplayPolylinesEvent>((event, emit) => emit(state.copyWith(polylines: event.polylines)));
+    on<DisplayPolylinesEvent>((event, emit) { 
+        // mueve la camara a la posicion donde quiero ir
+        moveCamera(event.endPointSearch!);
+        emit(state.copyWith(polylines: event.polylines, endPontSearch: event.endPointSearch));
+      }    
+    );
 
     //escuchar los cambios en el LocationBloc, para mover la camara en cada cambio de ubicacion del usuario
     locationStateSubscription = locationBloc.stream.listen(( locationState ) {
@@ -56,8 +61,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if( locationState.lastKnowLocation == null) return; 
       // print('jean: ${locationState.lastKnowLocation}'); 
       // al llegar aqui si tengo una loicalizacion
-      moveCamera(locationState.lastKnowLocation!);
-
+      print('jean: Siguiendo al usuario'); 
+      moveCamera(locationState.lastKnowLocation!); 
     });
 
   }
@@ -78,7 +83,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   // optimizacion para que al activar el seguimiento inmediatamente siga al usuario y no espere el delay de las siguiente corrdenadas
   // esta funcion es la que recibe el on() click encima del on y te dice que va recibir
   void _onstartFolliwUser(OnStartFollowingUserEvent event, Emitter<MapState> emit) {
-    emit( state.copyWith( isFollowingUser: true ));
+    // agremamos la direcion nueva para que se mueva el puntero al centro inicial de nuestra ultima ubicacion
+    emit( state.copyWith( isFollowingUser: true, endPontSearch: locationBloc.state.lastKnowLocation ));
     // cuando se hace referencia al evento localState se hace al bloc que estamos escuchando LocationBloc
     if( locationBloc.state.lastKnowLocation == null) return;
     moveCamera(locationBloc.state.lastKnowLocation!); 
@@ -104,7 +110,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
   }
 
   // marca la ruta de las direcciones seleccionadas manualmente\
-  Future drawRoutesPolylines( RouteDestination destination ) async {
+  Future drawRoutesPolylines( {required RouteDestination destination,  LatLng? endPointSearch} ) async {
+    
     final myRoute = Polyline(
       polylineId: const PolylineId('route'),
       color: Colors.black,
@@ -119,7 +126,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     currentPolylines['route'] = myRoute;
 
     // agregamos el evento de la ruta polylines de la busqueda manual DisplayPolylinesEvent
-    add(DisplayPolylinesEvent(currentPolylines));
+    add(DisplayPolylinesEvent( polylines: currentPolylines, endPointSearch: endPointSearch));
   }
 
   // mover la camara donde quiera

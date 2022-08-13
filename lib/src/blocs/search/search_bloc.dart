@@ -24,12 +24,27 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     on<OnDeactivateManualMarkerEvent>((event, emit) {
       emit(state.copyWidth(displayManualMarker: false));
-    });  
+    });
+
+    // maneja el evento del resultado de las busquedas de lugares sercanos
+    on<OnNewPlacesFoundEvent>((event, emit) => emit(state.copyWidth(places: event.places)) );
+
+    // evento agregar los resultados de las busquedas en el historial
+    // [ ...state.searchHistory, event.place ] lo agrega al final del array
+    // [ event.place, ...state.searchHistory ] lo agrega al principio del array 
+    on<AddToHistoryEvent>((event, emit) => emit(state.copyWidth( searchHistory: [ event.place, ...state.searchHistory ] )) );
 
   }
 
   Future<RouteDestination> getCoorsStartToEndBloc(LatLng start, LatLng end) async{  
     final trafficResponse = await trafficService.getCoorsStartToEnd(start, end);
+    if(trafficResponse.code == 'NoRoute') {
+      return RouteDestination(
+        points: [const LatLng(0, 0)], 
+        duration: 0, 
+        distance: 0
+      );
+    }
     // el geoometry viene codificado en polyline6 (Serializado en pares de valores) y debemos 
     // convertirlo a como quiere google Latitud y Longitud y MapBox viene al contrario
 
@@ -51,12 +66,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
 
 
-  // devolver la respuesta 
+  // devolver la respuesta de busqueda de lugares
   Future getPlacesByQueryBloc(LatLng proximity, String query) async{
-    final resp = trafficService.getResultByQuery(proximity, query);
+    final newPlaces = await trafficService.getResultByQuery(proximity, query);
 
-    // TODO:  alamcenar en el state
-
+    // alamcenar en el state
+    add(OnNewPlacesFoundEvent(newPlaces));
   }
 
 

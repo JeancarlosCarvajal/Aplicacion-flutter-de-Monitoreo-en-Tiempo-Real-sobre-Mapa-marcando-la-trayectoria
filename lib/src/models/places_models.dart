@@ -97,6 +97,12 @@ class Feature {
         "geometry": geometry.toMap(),
         "context": List<dynamic>.from(context.map((x) => x.toMap())),
     };
+
+    @override
+  String toString() {
+    //  : implement toString
+    return 'Feature: $text';
+  }
 }
 
 class Context {
@@ -190,8 +196,8 @@ class Properties {
         this.category,
     });
 
-    final String foursquare;
-    final bool landmark;
+    final String? foursquare;
+    final bool? landmark;
     final String? address;
     final String? category;
 
@@ -201,7 +207,7 @@ class Properties {
 
     factory Properties.fromMap(Map<String, dynamic> json) => Properties(
         foursquare: json["foursquare"],
-        landmark: json["landmark"],
+        landmark: json["landmark"] ?? false,
         address: json["address"],
         category: json["category"],
     );

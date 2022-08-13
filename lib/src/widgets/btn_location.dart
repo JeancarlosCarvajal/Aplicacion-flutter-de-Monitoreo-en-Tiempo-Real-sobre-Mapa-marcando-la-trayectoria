@@ -25,6 +25,7 @@ class BtnCurrentLocation extends StatelessWidget {
             
             // acceder al Bloc
             final userLocation = locationBloc.state.lastKnowLocation;
+            final mapBloc = BlocProvider.of<MapBloc>(context);
             
             // Snack Bar para que muestre mensaje personalizado
             if(userLocation == null) { 
@@ -35,7 +36,7 @@ class BtnCurrentLocation extends StatelessWidget {
             }
             // si todo bien en caso si hay userLocation, seguimos con el codigo debajo
             // setear el seguimiento del usuario en true
-            mapBloc.add(OnStartFollowingUserEvent());            
+            mapBloc.add(OnStartFollowingUserEvent());
             // acceder al MapBloc para mover la camara a la ultima posicion conocida en el locationBloc
             mapBloc.moveCamera(userLocation);
 

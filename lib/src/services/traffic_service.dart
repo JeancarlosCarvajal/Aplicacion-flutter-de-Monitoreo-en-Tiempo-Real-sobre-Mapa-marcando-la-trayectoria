@@ -72,8 +72,9 @@ class TrafficService {
       }
     ); 
 
-    final data = TrafficResponse.fromMap(responce.data); 
+    if(responce.data['code'] == 'NoRoute') return TrafficResponse(code: responce.data['code'], uuid: 'nok');
 
+    final data = TrafficResponse.fromMap(responce.data); 
     return data;  
   } 
 

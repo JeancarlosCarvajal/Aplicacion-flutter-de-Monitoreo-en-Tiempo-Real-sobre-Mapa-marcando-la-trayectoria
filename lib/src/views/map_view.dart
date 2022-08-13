@@ -20,9 +20,10 @@ class MapView extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final mapBloc = BlocProvider.of<MapBloc>(context);
+    final locationBloc = BlocProvider.of<LocationBloc>(context, listen: false);
 
     final CameraPosition initialCameraPosition = CameraPosition( 
-      target: initialLocation, 
+      target: initialLocation,
       zoom: 15
     );
     final size = MediaQuery.of(context).size;
@@ -38,7 +39,14 @@ class MapView extends StatelessWidget {
           zoomControlsEnabled: false,
           myLocationButtonEnabled: false,
           polylines: polylines,
-          
+          markers:  <Marker>{
+            Marker(
+              draggable: true,
+              markerId: const MarkerId('marker_1'),
+              position: mapBloc.state.endPontSearch ?? locationBloc.state.lastKnowLocation!,
+              icon: BitmapDescriptor.defaultMarkerWithHue(310),
+            )
+          },
           // es una manera de capturar el controlador y tenerlo disponible en otro lado de la aplicacion 
           onMapCreated: (controller) => mapBloc.add(OnMapInitializedEvent(controller)), 
 
@@ -46,7 +54,7 @@ class MapView extends StatelessWidget {
           // aqui estamos pasando la ubicacion seleccionada al objeto de la clase del bloc llamada mapCenter
           //ojo este procedimiento no redibuja el widget es solo para mantener la referencia de la ubicaicon
           // redibujar el widget en oncameramove consume demasiados recursos del dispositivo
-          onCameraMove: (position) => mapBloc.mapCenter = position.target,
+          onCameraMove: (position) => mapBloc.mapCenter = position.target, 
       
           // TODO: Markers
       

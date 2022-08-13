@@ -51,7 +51,7 @@ class _MapScreenState extends State<MapScreen> {
               // remuevo las polylines del Map nuevo que cree peeero el original queda intacto
               // esto se hace para no eliminar el original que lo podemos usar nuevamente para activar la vista de la ruta
                 polylines.removeWhere((key, value) => key == 'MyRoute');
-              }
+              } 
               return SingleChildScrollView( // hay que definir dimenciones de los hijos sino da error
                 child: Stack(
                   children: [

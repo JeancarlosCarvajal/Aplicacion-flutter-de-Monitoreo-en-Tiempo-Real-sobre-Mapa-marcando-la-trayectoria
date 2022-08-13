@@ -18,11 +18,15 @@ class MapState extends Equatable {
       color: black87
     }
   */
+  
+  // captura la ubicacion final del usuario para crear una marca en la ruta
+  final LatLng? endPontSearch;
 
   const MapState({
     this.isMapInitialized = false, 
-    this.isFollowingUser = true,
+    this.isFollowingUser = false,
     this.showMyRoute = true,
+    this.endPontSearch,
     Map<String, Polyline>? polylines
   }): polylines = polylines ?? const {};
 
@@ -30,11 +34,13 @@ class MapState extends Equatable {
     bool? isMapInitialized, 
     bool? isFollowingUser,
     bool? showMyRoute,
+    LatLng? endPontSearch,
     Map<String, Polyline>? polylines
   }) => MapState(
       isMapInitialized: isMapInitialized ?? this.isMapInitialized,
       isFollowingUser: isFollowingUser ?? this.isFollowingUser,    
       showMyRoute: showMyRoute ?? this.showMyRoute,
+      endPontSearch: endPontSearch ?? this.endPontSearch,
       polylines: polylines ?? this.polylines
   );
   

@@ -81,9 +81,10 @@ class _ManualMarkerBody extends StatelessWidget {
 
                   // mostrar mensaje de cargando
                   showLoadingMessage(context);
- 
+
+                  // crea la linea de la ruta seleccionada
                   final destination = await searchBloc.getCoorsStartToEndBloc(start, end);
-                  await mapBloc.drawRoutesPolylines(destination);
+                  await mapBloc.drawRoutesPolylines(destination: destination, endPointSearch: end);
                 
                   searchBloc.add(OnDeactivateManualMarkerEvent());
 

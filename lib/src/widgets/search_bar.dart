@@ -28,10 +28,28 @@ class _SearchBarBody extends StatelessWidget {
   const _SearchBarBody({Key? key}) : super(key: key);
 
   //
-  void onSearchResult( BuildContext context, SearchResult result){
-    final searchBloc = BlocProvider.of<SearchBloc>(context); 
+  void onSearchResult( BuildContext context, SearchResult result) async{
+    final searchBloc = BlocProvider.of<SearchBloc>(context);
+    final MapBloc mapBloc = BlocProvider.of<MapBloc>(context);
+    final LocationBloc locationBloc = BlocProvider.of<LocationBloc>(context);
     if(result.manual == true){
       searchBloc.add(OnActivateManualMarkerEvent());
+      return;
+    } 
+
+    // evaluar si tenemos una posicion
+    if(result.manual == false && locationBloc.state.lastKnowLocation != null && searchBloc.state.places != [] && result.position != null) {
+      // searchBloc.add(OnActivateManualMarkerEvent());
+      // crea la linea de la ruta seleccionada
+      final destination = await searchBloc.getCoorsStartToEndBloc( locationBloc.state.lastKnowLocation!, result.position! );
+      // si la distancia es cero 0 entonces no llego datos de la API cancela todo
+      if(destination.distance == 0) {
+        print('jean: No hubo respuesta de la API noRoute');
+        return;
+      } 
+      // guardamos la informacion del la ultima busqueda en el eventoHistory
+      searchBloc.add(AddToHistoryEvent(result.lastSearch!));
+      await mapBloc.drawRoutesPolylines( destination: destination, endPointSearch: result.position!);
       return;
     } 
   }
