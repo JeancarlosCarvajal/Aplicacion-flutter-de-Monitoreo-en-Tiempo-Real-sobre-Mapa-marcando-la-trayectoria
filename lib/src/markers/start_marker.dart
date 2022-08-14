@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 
 
 class StartMarkerPainter extends CustomPainter {
+  // minutos
+  final double minutes;
+  // destino
+  final String destination;
+
+  StartMarkerPainter({
+    required this.minutes, 
+    required this.destination
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
     // implement paint hacer el dibujo necesario
@@ -39,8 +49,8 @@ class StartMarkerPainter extends CustomPainter {
     // texto
     // minutos
     final textSpan = TextSpan(
-      style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400),
-      text: '55'
+      style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400),
+      text: minutes.floorToDouble().toInt().toString()
     );
     // pintar el texto 
     final minutesPainter = TextPainter(
@@ -55,7 +65,7 @@ class StartMarkerPainter extends CustomPainter {
     minutesPainter.paint(canvas, const Offset(40, 35));
 
     // hacer las palabras que acompanan al valor de los minutos
-    final minutsText = TextSpan(
+    const minutsText = TextSpan(
       style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400),
       text: 'Min'
     );
@@ -70,6 +80,30 @@ class StartMarkerPainter extends CustomPainter {
     );
     // dibujar el texto en el canvas
     minutesMinPainter.paint(canvas, const Offset(40, 68));
+
+    // crear la descipcion
+    // const tempDestino = 'Mi casa, Playa Guaica y Marina del Rey, hola mundo'; 
+    // const tempDestino = 'Mi casa'; 
+    final locationText = TextSpan(
+      style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400),
+      text: destination
+    );
+    // pintar el texto descripcion
+    final locationPainter = TextPainter(
+      maxLines: 2,
+      ellipsis: '...',
+      text: locationText,
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.left,
+    )..layout(
+      minWidth: size.width-135,
+      maxWidth: size.width-135
+    );
+    // creamos la ubicacion de las letras de manera condicional para ubicarla mas al centro si tiene dos lineas
+    final double offsetY = ( destination.length > 20 ) ? 35 : 48;
+    // pintar el location painter
+    locationPainter.paint(canvas, Offset(120, offsetY));
+
 
   }
 
