@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class EndMarkerPainter extends CustomPainter {
   // minutos
-  final double kilometers;
+  final int kilometers;
   // destino
   final String destination;
 
@@ -50,7 +50,7 @@ class EndMarkerPainter extends CustomPainter {
     // minutos
     final textSpan = TextSpan(
       style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w400),
-      text: kilometers.floorToDouble().toInt().toString()
+      text: '$kilometers'
     );
     // pintar el texto 
     final minutesPainter = TextPainter(

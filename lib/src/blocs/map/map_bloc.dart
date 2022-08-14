@@ -131,28 +131,34 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     final startMarket = await getAssetImageMarker();
     // marcador desde url personalizado
     final endMarker = await getNetworkImageMarker();
+    // marker desde widget
+    final startMarketWidget = await getStartCustomMarker(tripDuration.toInt(), destination.endPlace?.text != null ? destination.endPlace!.text : 'Inicio');
+    final endMarketWidget = await getEndCustomMarker(kms.toInt(), destination.endPlace?.text != null ? destination.endPlace!.text : 'Fin');
 
     final startMarkers = Marker(
       markerId: const MarkerId('start'),
       position: destination.points.first, // agrega al first al final del objeto array me devuelve el primer valor
       // icon: BitmapDescriptor.defaultMarkerWithHue(250),  // hecho por jean
-      icon: startMarket,
-      infoWindow: const InfoWindow(
-        title: 'Inicio',
-        snippet: 'Este es el Punto de Inicio de mi Ruta'
-      )
+      // icon: startMarket, // desde la imagen
+      icon: startMarketWidget, // desde el widget
+      anchor: const Offset(0.1, 1.0),
+      // infoWindow: const InfoWindow(
+      //   title: 'Inicio',
+      //   snippet: 'Este es el Punto de Inicio de mi Ruta'
+      // )
     );
 
     final endMarkers = Marker(
       markerId: const MarkerId('end'),
       position: destination.points.last, // agrega al first al final del objeto array me devuelve el primer valor
       // icon: BitmapDescriptor.defaultMarkerWithHue(000), // lo tenia Jean
-      icon: endMarker,
-      infoWindow: InfoWindow(
-        title: destination.endPlace?.text != null ? destination.endPlace!.text : 'End',
-        // snippet: 'Distance: $kms kms, Duration: $tripDuration minutes' // tenia esto para pruebas
-        snippet: destination.endPlace?.placeName != null ? destination.endPlace!.placeName : 'Distance: $kms kms, Duration: $tripDuration minutes'
-      )
+      // icon: endMarker, // desde la imagen
+      icon: endMarketWidget, // desde el widget
+      // infoWindow: InfoWindow(
+      //   title: destination.endPlace?.text != null ? destination.endPlace!.text : 'End',
+      //   // snippet: 'Distance: $kms kms, Duration: $tripDuration minutes' // tenia esto para pruebas
+      //   snippet: destination.endPlace?.placeName != null ? destination.endPlace!.placeName : 'Distance: $kms kms, Duration: $tripDuration minutes'
+      // )
     );
 
     // creamos una copia de las polylines actuales, se hace esto porque no podemos modificar un  Mapa que sea constante
@@ -171,7 +177,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
     // esperar un segundo pa que muestre
     await Future.delayed(const Duration(milliseconds: 300));
     // busca el marcador final
-    _mapController?.showMarkerInfoWindow(const MarkerId('end')); 
+    // _mapController?.showMarkerInfoWindow(const MarkerId('end')); 
   }
 
   // mover la camara donde quiera

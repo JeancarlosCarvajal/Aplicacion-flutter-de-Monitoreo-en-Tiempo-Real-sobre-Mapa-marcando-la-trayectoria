@@ -36,7 +36,7 @@ class MapsApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MappsApp',
       // home: LoadingScreen(),
-      home: TestMarkerScreen(),
+      home: MapScreen(),
       routes: {},
     );
   }
