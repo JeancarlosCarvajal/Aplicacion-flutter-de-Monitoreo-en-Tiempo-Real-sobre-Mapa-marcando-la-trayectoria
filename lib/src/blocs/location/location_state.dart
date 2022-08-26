@@ -24,7 +24,7 @@ class LocationState extends Equatable {
     LatLng? lastKnowLocation,
     List<LatLng>? myLocationHistory
   }) => LocationState(
-    isFollowingUser     : isFollowingUser ?? this.isFollowingUser, 
+    isFollowingUser   : isFollowingUser ?? this.isFollowingUser, 
     lastKnowLocation  : lastKnowLocation ?? this.lastKnowLocation, 
     myLocationHistory : myLocationHistory ?? this.myLocationHistory, 
   );

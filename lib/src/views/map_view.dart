@@ -59,13 +59,7 @@ class MapView extends StatelessWidget {
           //ojo este procedimiento no redibuja el widget es solo para mantener la referencia de la ubicaicon
           // redibujar el widget en oncameramove consume demasiados recursos del dispositivo
           onCameraMove: (position) => mapBloc.mapCenter = position.target, 
-      
-          // TODO: Markers
-      
-          // TODO: polylines
-      
-          // TODO: cuando se mueva el mapa 
-      
+            
         ),
       ),
     ); 

@@ -36,7 +36,7 @@ class LocationBloc extends Bloc<LocationEvent, LocationState> {
     final Position position = await Geolocator.getCurrentPosition();
     // print(position); 
     // dispara el evento que guarda la inforamcion de la ubicacon del uusuario en el historial
-    add(OnNewUserLocationEvent( LatLng(position.latitude, position.longitude) ));
+    add( OnNewUserLocationEvent( LatLng(position.latitude, position.longitude) ));
   }
 
   // darle seguimiento al usuario del gps
